@@ -533,7 +533,8 @@ body {
   border: 2px solid #fff;
 }
 
-.vinyl-disc.playing {
+.vinyl-disc.playing,
+#dock-vinyl-disc.playing {
   animation: spinRecord 3.5s linear infinite;
 }
 

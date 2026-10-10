@@ -287,15 +287,17 @@
 
   <!-- Floating Romantic Music Dock & Vinyl Player -->
   <div class="fixed bottom-6 left-6 z-40 flex flex-col items-start gap-3">
-    <!-- Collapsible Mini Video/Audio Player Card -->
+    <!-- Collapsible Mini Audio Player Card (100% Local Offline Audio) -->
     <div id="music-player-card"
-      class="glass-card bg-white/95 p-4 rounded-3xl shadow-2xl border border-pink-200 w-80 sm:w-96 transition-all duration-300 hidden flex-col gap-3 animate-float">
+      class="glass-card bg-white/95 p-5 rounded-3xl shadow-2xl border border-pink-200 w-80 sm:w-96 transition-all duration-300 hidden flex-col gap-3 animate-float">
+      
+      <!-- Card Header -->
       <div class="flex items-center justify-between pb-2 border-b border-pink-100">
         <div class="flex items-center gap-2">
           <i data-lucide="music" class="w-4 h-4 text-pink-500"></i>
           <div>
             <h4 id="dock-song-title" class="text-xs font-bold text-gray-800 line-clamp-1">Bruno Mars - Risk It All</h4>
-            <span class="text-[10px] text-pink-500 font-medium">Our 7th Monthsary Playlist</span>
+            <span class="text-[10px] text-pink-500 font-medium">Kirsten & Ycany Playlist</span>
           </div>
         </div>
         <button onclick="musicPlayer.toggleDock()" class="text-gray-400 hover:text-gray-600 p-1"
@@ -304,18 +306,69 @@
         </button>
       </div>
 
-      <!-- Visible Responsive YouTube Player Frame (Guarantees playback!) -->
-      <div
-        class="w-full aspect-video rounded-2xl overflow-hidden bg-black/90 shadow-inner relative border border-pink-100">
-        <iframe id="main-yt-frame" src="" class="w-full h-full"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen></iframe>
+      <!-- Animated Vinyl Album Showcase Display -->
+      <div class="relative w-full py-4 rounded-2xl bg-gradient-to-br from-pink-50 via-rose-50 to-pink-100 border border-pink-200/80 flex flex-col items-center justify-center overflow-hidden shadow-inner">
+        <!-- Center Vinyl Record with album sticker -->
+        <div id="dock-vinyl-disc" class="w-24 h-24 rounded-full bg-zinc-900 border-4 border-zinc-800 shadow-xl flex items-center justify-center relative cursor-pointer transition-transform hover:scale-105"
+          onclick="musicPlayer.togglePlay()">
+          <div class="w-20 h-20 rounded-full border border-zinc-700/60 flex items-center justify-center">
+            <div class="w-16 h-16 rounded-full border border-zinc-700/60 flex items-center justify-center">
+              <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-pink-500 to-rose-400 flex items-center justify-center shadow">
+                <span id="dock-album-icon" class="text-sm">💖</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p id="dock-song-artist" class="text-xs font-bold text-gray-800 mt-3">Bruno Mars</p>
+        <span id="dock-song-subtitle" class="text-[10px] text-pink-500 font-medium">Risk It All</span>
       </div>
 
-      <!-- Quick 3-Song Switcher Tabs (Kept as clickable identifiers) -->
-      <div class="grid grid-cols-3 gap-1.5 pt-1">
+      <!-- Progress Timeline Scrubber -->
+      <div class="space-y-1">
+        <input type="range" id="audio-progress" min="0" max="100" value="0"
+          class="w-full h-1.5 bg-pink-100 rounded-lg appearance-none cursor-pointer accent-pink-500"
+          oninput="musicPlayer.seekAudio(this.value)">
+        <div class="flex items-center justify-between text-[10px] text-gray-400 font-medium px-0.5">
+          <span id="audio-current-time">0:00</span>
+          <span id="audio-duration">0:00</span>
+        </div>
+      </div>
+
+      <!-- Audio Playback Controls (Prev, Play/Pause, Next, Volume) -->
+      <div class="flex items-center justify-between pt-1">
+        <div class="flex items-center gap-2">
+          <!-- Previous Song -->
+          <button onclick="musicPlayer.prevTrack()" class="p-2 rounded-full hover:bg-pink-50 text-gray-700 hover:text-pink-600 transition-all" title="Previous Song">
+            <i data-lucide="skip-back" class="w-4 h-4"></i>
+          </button>
+
+          <!-- Main Play / Pause Button -->
+          <button onclick="musicPlayer.togglePlay()" id="dock-main-play-btn"
+            class="w-10 h-10 rounded-full bg-gradient-to-r from-pink-500 to-rose-500 text-white flex items-center justify-center shadow-md hover:scale-105 active:scale-95 transition-all"
+            title="Play / Pause">
+            <i data-lucide="play" class="w-4 h-4 fill-white ml-0.5"></i>
+          </button>
+
+          <!-- Next Song -->
+          <button onclick="musicPlayer.nextTrack()" class="p-2 rounded-full hover:bg-pink-50 text-gray-700 hover:text-pink-600 transition-all" title="Next Song">
+            <i data-lucide="skip-forward" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+        <!-- Volume Slider -->
+        <div class="flex items-center gap-1.5 text-gray-500">
+          <i data-lucide="volume-2" class="w-3.5 h-3.5 text-pink-500"></i>
+          <input type="range" id="audio-volume" min="0" max="1" step="0.05" value="0.8"
+            class="w-16 h-1 bg-pink-100 rounded-lg appearance-none cursor-pointer accent-pink-500"
+            oninput="musicPlayer.setVolume(this.value)">
+        </div>
+      </div>
+
+      <!-- Quick 3-Song Switcher Tabs -->
+      <div class="grid grid-cols-3 gap-1.5 pt-1 border-t border-pink-100">
         <button onclick="musicPlayer.selectTrack('risk_it_all')" id="dock-btn-risk_it_all"
-          class="p-2 rounded-xl text-center border border-pink-300 bg-pink-100/70 hover:bg-pink-100 transition-all">
+          class="p-2 rounded-xl text-center border border-pink-400 bg-pink-100/90 hover:bg-pink-100 transition-all">
           <span class="text-xs block">💖</span>
           <span class="text-[10px] font-bold text-gray-800 block truncate">Risk It All</span>
           <span class="text-[8px] text-gray-500 block truncate">Bruno Mars</span>
@@ -336,14 +389,10 @@
         </button>
       </div>
 
-      <div class="flex items-center justify-between text-[10px] text-gray-500 pt-1">
-        <a id="dock-yt-direct-link" href="https://www.youtube.com/watch?v=BF2_ipR1OI0" target="_blank" rel="noopener noreferrer"
-          class="text-pink-600 hover:text-pink-700 underline font-medium flex items-center gap-1">
-          <i data-lucide="external-link" class="w-3 h-3"></i>
-          <span>Open on YouTube</span>
-        </a>
+      <div class="flex items-center justify-between text-[10px] text-gray-400 pt-0.5">
+        <span>Offline MP3 Player</span>
         <button onclick="document.getElementById('song-file-input').click()" class="text-pink-500 hover:underline">
-          Upload MP3
+          Upload Custom MP3
         </button>
       </div>
     </div>
@@ -369,9 +418,9 @@
         </div>
       </div>
 
-      <button id="play-music-btn" onclick="musicPlayer.toggleDock()"
+      <button id="play-music-btn" onclick="musicPlayer.togglePlay()"
         class="w-9 h-9 rounded-full bg-gradient-to-r from-pink-500 to-rose-500 flex items-center justify-center shadow-md hover:scale-105 transition-transform text-white"
-        title="Open Music Player">
+        title="Play / Pause Music">
         <i data-lucide="play" class="w-4 h-4 text-white"></i>
       </button>
 
@@ -580,6 +629,8 @@
     <p>Celebrating 7 Months of Love • Kirsten & Ycany • Forever & Always Together</p>
   </footer>
 
+  <!-- Romantic Audio Engine (Seamless Multi-Page Playback) -->
+  <script src="music-player.js"></script>
   <!-- Application Logic -->
   <script src="app.js"></script>
 </body>
