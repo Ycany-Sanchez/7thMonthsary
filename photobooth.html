@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Photobooth Studio - Kirsten & Ycany</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Fonts & Shared Styles -->
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="photobooth.css">
+</head>
+
+<body class="antialiased relative selection:bg-pink-300 selection:text-pink-900 pb-20">
+
+  <!-- Background Falling Particles Canvas -->
+  <canvas id="particles-canvas"></canvas>
+
+  <!-- Navigation Bar -->
+  <header class="sticky top-4 z-40 px-4 max-w-7xl mx-auto">
+    <div class="glass-pill px-5 py-3 rounded-full flex items-center justify-between shadow-lg">
+      <div class="flex items-center gap-3">
+        <a href="index.html"
+          class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/70 hover:bg-white text-xs sm:text-sm font-semibold text-[var(--text-main)] shadow-sm hover:scale-105 transition-all border border-pink-200">
+          <i data-lucide="arrow-left" class="w-4 h-4 text-pink-500"></i>
+          <span>Back to Memory Vault</span>
+        </a>
+        <span class="hidden sm:inline-block font-script text-xl font-bold bg-gradient-to-r from-pink-500 to-rose-600 bg-clip-text text-transparent">
+          Kirsten & Ycany Studio
+        </span>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <!-- Theme Selectors -->
+        <div class="flex items-center bg-white/40 p-1 rounded-full border border-pink-200/50 shadow-inner">
+          <button onclick="setTheme('default')" title="Blush Pink"
+            class="w-5 h-5 rounded-full bg-[#ff85a2] hover:scale-110 transition-transform m-0.5 border border-white shadow-sm"></button>
+          <button onclick="setTheme('rose-gold')" title="Rose Gold"
+            class="w-5 h-5 rounded-full bg-[#d4a373] hover:scale-110 transition-transform m-0.5 border border-white shadow-sm"></button>
+          <button onclick="setTheme('lavender')" title="Lavender Dream"
+            class="w-5 h-5 rounded-full bg-[#cdb4db] hover:scale-110 transition-transform m-0.5 border border-white shadow-sm"></button>
+          <button onclick="setTheme('midnight')" title="Starry Midnight"
+            class="w-5 h-5 rounded-full bg-[#2c1236] hover:scale-110 transition-transform m-0.5 border border-white shadow-sm"></button>
+        </div>
+
+        <a href="#strip-preview-section"
+          class="bg-gradient-to-r from-pink-500 to-rose-500 text-white px-3.5 py-1.5 rounded-full text-xs font-semibold shadow hover:scale-105 transition-transform flex items-center gap-1">
+          <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+          <span>View Strip</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Studio Header Title -->
+  <section class="pt-8 pb-4 px-4 text-center relative z-10">
+    <div class="inline-flex items-center gap-1.5 px-4 py-1 rounded-full glass-pill text-xs font-semibold text-pink-600 mb-2 shadow-sm">
+      <i data-lucide="sparkles" class="w-3.5 h-3.5 text-pink-500"></i>
+      <span>7th Monthsary Premium Photobooth Studio</span>
+    </div>
+    <h1 class="font-serif-elegant text-3xl sm:text-5xl font-bold text-[var(--text-main)]">
+      Kirsten & Ycany Photobooth
+    </h1>
+    <p class="text-xs sm:text-sm text-[var(--text-muted)] max-w-md mx-auto mt-2">
+      Korean Life4Cuts studio. Take cute poses with bold aesthetic filters, unique patterned cards, interactive stickers, and doodles!
+    </p>
+  </section>
+
+  <!-- Main Photobooth Workspace -->
+  <main class="max-w-7xl mx-auto px-4 mt-4 grid grid-cols-1 lg:grid-cols-12 gap-8 relative z-10">
+
+    <!-- LEFT COLUMN: Live Camera & Studio Filter Controller (lg:col-span-7) -->
+    <div class="lg:col-span-7 space-y-5">
+      
+      <!-- Camera Card -->
+      <div class="glass-card p-4 sm:p-6 rounded-3xl relative overflow-hidden border border-pink-200 shadow-xl">
+        
+        <!-- Live Viewfinder Container -->
+        <div class="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-zinc-900 shadow-inner flex items-center justify-center border-2 border-pink-200/80">
+          
+          <!-- WebCam Video Stream -->
+          <video id="booth-video" autoplay playsinline muted class="w-full h-full object-cover transform scale-x-[-1]"></video>
+
+          <!-- Flash Effect Layer -->
+          <div id="camera-flash" class="absolute inset-0 bg-white pointer-events-none opacity-0 transition-opacity duration-150 z-30"></div>
+
+          <!-- Countdown Big Overlay -->
+          <div id="countdown-overlay" class="absolute inset-0 flex items-center justify-center bg-black/40 z-20 hidden">
+            <span id="countdown-number" class="text-white font-serif-elegant text-8xl font-black drop-shadow-lg animate-ping">3</span>
+          </div>
+
+          <!-- Camera Placeholder / Permission Prompt -->
+          <div id="camera-prompt" class="absolute inset-0 flex flex-col items-center justify-center bg-zinc-900/95 p-6 text-center text-white z-10">
+            <div class="w-16 h-16 rounded-full bg-pink-500/20 flex items-center justify-center mb-4 border border-pink-500/40">
+              <i data-lucide="camera" class="w-8 h-8 text-pink-400"></i>
+            </div>
+            <h3 class="font-serif-elegant text-xl font-bold">Start Your Photobooth Session</h3>
+            <p class="text-xs text-zinc-400 mt-1 max-w-xs">Click start camera to begin taking cute photos with Kirsten!</p>
+            <button onclick="boothApp.startCamera()"
+              class="mt-5 px-6 py-2.5 rounded-full bg-gradient-to-r from-pink-500 to-rose-500 text-white font-semibold text-xs shadow-lg hover:scale-105 transition-all flex items-center gap-2">
+              <i data-lucide="video" class="w-4 h-4"></i>
+              Start Camera
+            </button>
+          </div>
+
+          <!-- Top-bar live indicators on camera -->
+          <div class="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none z-10">
+            <div class="glass-pill px-3 py-1 rounded-full text-[10px] font-bold text-white bg-black/50 backdrop-blur border border-white/20 flex items-center gap-1.5">
+              <span id="camera-status-dot" class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+              <span id="camera-status-text">Ready</span>
+            </div>
+            <div class="glass-pill px-3 py-1 rounded-full text-[10px] font-bold text-white bg-black/50 backdrop-blur border border-white/20 flex items-center gap-1.5">
+              <span id="active-effect-label">NORMAL</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Camera Toolbar & Controls -->
+        <div class="mt-4 flex flex-wrap items-center justify-between gap-3">
+          
+          <!-- Timer Selector -->
+          <div class="flex items-center gap-1.5 bg-pink-50/70 p-1 rounded-xl border border-pink-200">
+            <span class="text-[11px] font-semibold text-pink-700 px-2 flex items-center gap-1">
+              <i data-lucide="timer" class="w-3.5 h-3.5 text-pink-500"></i> Timer:
+            </span>
+            <button onclick="boothApp.setTimer(3)" id="timer-btn-3" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-pink-500 text-white shadow-sm transition-all">3s</button>
+            <button onclick="boothApp.setTimer(5)" id="timer-btn-5" class="px-2.5 py-1 rounded-lg text-xs font-semibold text-gray-700 hover:bg-pink-100 transition-all">5s</button>
+            <button onclick="boothApp.setTimer(10)" id="timer-btn-10" class="px-2.5 py-1 rounded-lg text-xs font-semibold text-gray-700 hover:bg-pink-100 transition-all">10s</button>
+          </div>
+
+          <!-- Camera Tools: Mirror, Sound, Upload -->
+          <div class="flex items-center gap-2">
+            <button onclick="boothApp.toggleMirror()" id="mirror-btn" title="Toggle Mirror (Selfie Mode)"
+              class="p-2 rounded-xl bg-pink-50 text-pink-600 hover:bg-pink-100 border border-pink-200 text-xs font-medium flex items-center gap-1">
+              <i data-lucide="flip-horizontal" class="w-4 h-4"></i>
+              <span class="hidden sm:inline">Mirror</span>
+            </button>
+            <button onclick="boothApp.toggleAudio()" id="audio-btn" title="Toggle Countdown Beep Sound"
+              class="p-2 rounded-xl bg-pink-50 text-pink-600 hover:bg-pink-100 border border-pink-200 text-xs font-medium flex items-center gap-1">
+              <i data-lucide="volume-2" class="w-4 h-4"></i>
+            </button>
+            <label class="p-2 rounded-xl bg-pink-50 text-pink-600 hover:bg-pink-100 border border-pink-200 text-xs font-medium flex items-center gap-1 cursor-pointer">
+              <i data-lucide="upload" class="w-4 h-4"></i>
+              <span class="hidden sm:inline">Upload Files</span>
+              <input type="file" id="bulk-upload-input" multiple accept="image/*" class="hidden" onchange="boothApp.handleBulkUpload(event)">
+            </label>
+          </div>
+        </div>
+
+        <!-- Big Capture Buttons -->
+        <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <button onclick="boothApp.startCaptureSequence()" id="start-sequence-btn"
+            class="py-3.5 px-6 rounded-2xl bg-gradient-to-r from-pink-500 via-rose-500 to-pink-600 text-white font-bold text-sm shadow-lg hover:shadow-pink-300 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2">
+            <i data-lucide="aperture" class="w-5 h-5"></i>
+            <span>Snap 4-Shot Series</span>
+          </button>
+          <button onclick="boothApp.captureSingleShot()" id="single-snap-btn"
+            class="py-3.5 px-6 rounded-2xl glass-card text-[var(--text-main)] font-bold text-sm border border-pink-200 hover:bg-white hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2">
+            <i data-lucide="camera" class="w-5 h-5 text-pink-500"></i>
+            <span>Snap Single Current Shot</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Photo Color Grading / Filters (BOLD & HIGHLY NOTICEABLE) -->
+      <div class="glass-card p-5 rounded-3xl border border-pink-200 shadow-md space-y-3">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <i data-lucide="wand-2" class="w-4 h-4 text-pink-500"></i>
+            <h3 class="font-serif-elegant font-bold text-sm text-[var(--text-main)]">
+              Bold Aesthetic Studio Filters
+            </h3>
+          </div>
+          <span class="text-[10px] text-pink-600 bg-pink-100 font-bold px-2 py-0.5 rounded-full">
+            Noticeable Tones
+          </span>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
+          <!-- Natural -->
+          <button onclick="boothApp.setFilter('none')" id="filter-none"
+            class="p-2.5 rounded-2xl text-center border-2 border-pink-400 bg-pink-100 font-bold text-xs text-gray-800 transition-all shadow-sm">
+            <div class="text-sm mb-0.5">🌿</div>
+            <div>Natural</div>
+          </button>
+
+          <!-- Golden Warm -->
+          <button onclick="boothApp.setFilter('warm')" id="filter-warm"
+            class="p-2.5 rounded-2xl text-center border border-amber-200 bg-amber-50 hover:bg-amber-100 text-xs font-semibold text-amber-900 transition-all shadow-sm">
+            <div class="text-sm mb-0.5">☀️</div>
+            <div>Golden Warm</div>
+          </button>
+
+          <!-- Rosé Pink -->
+          <button onclick="boothApp.setFilter('rose')" id="filter-rose"
+            class="p-2.5 rounded-2xl text-center border border-pink-200 bg-rose-50 hover:bg-rose-100 text-xs font-semibold text-rose-900 transition-all shadow-sm">
+            <div class="text-sm mb-0.5">🌸</div>
+            <div>Rosé Pink</div>
+          </button>
+
+          <!-- 90s Vintage Film -->
+          <button onclick="boothApp.setFilter('vintage')" id="filter-vintage"
+            class="p-2.5 rounded-2xl text-center border border-amber-300 bg-[#faedcd] hover:bg-[#e9d8a6] text-xs font-semibold text-amber-950 transition-all shadow-sm">
+            <div class="text-sm mb-0.5">🎞️</div>
+            <div>90s Vintage</div>
+          </button>
+
+          <!-- Noir B&W -->
+          <button onclick="boothApp.setFilter('bw')" id="filter-bw"
+            class="p-2.5 rounded-2xl text-center border border-zinc-700 bg-zinc-900 text-white text-xs font-semibold transition-all shadow-sm">
+            <div class="text-sm mb-0.5">🖤</div>
+            <div>Noir B&W</div>
+          </button>
+
+          <!-- Dreamy Bloom -->
+          <button onclick="boothApp.setFilter('bloom')" id="filter-bloom"
+            class="p-2.5 rounded-2xl text-center border border-purple-200 bg-purple-50 hover:bg-purple-100 text-xs font-semibold text-purple-900 transition-all shadow-sm">
+            <div class="text-sm mb-0.5">✨</div>
+            <div>Dreamy Bloom</div>
+          </button>
+
+          <!-- Cyber Pop -->
+          <button onclick="boothApp.setFilter('cyber')" id="filter-cyber"
+            class="p-2.5 rounded-2xl text-center border border-fuchsia-300 bg-fuchsia-50 hover:bg-fuchsia-100 text-xs font-semibold text-fuchsia-900 transition-all shadow-sm">
+            <div class="text-sm mb-0.5">🔮</div>
+            <div>Cyber Pop</div>
+          </button>
+
+          <!-- Sunset Glow -->
+          <button onclick="boothApp.setFilter('sunset')" id="filter-sunset"
+            class="p-2.5 rounded-2xl text-center border border-orange-200 bg-orange-50 hover:bg-orange-100 text-xs font-semibold text-orange-950 transition-all shadow-sm">
+            <div class="text-sm mb-0.5">🌅</div>
+            <div>Sunset Glow</div>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT COLUMN: Unique Card Themes, Stickers, Accurate Doodle, Preview (lg:col-span-5) -->
+    <div id="strip-preview-section" class="lg:col-span-5 space-y-5">
+      
+      <!-- Customization Tabs Card -->
+      <div class="glass-card p-5 rounded-3xl border border-pink-200 shadow-md space-y-4">
+        
+        <!-- Tab 1: Layout Selection -->
+        <div>
+          <label class="text-xs font-bold text-gray-700 flex items-center gap-1.5 mb-2">
+            <i data-lucide="layout-grid" class="w-3.5 h-3.5 text-pink-500"></i> Strip Layout:
+          </label>
+          <div class="grid grid-cols-3 gap-2">
+            <button onclick="boothApp.setLayout('strip4')" id="layout-strip4"
+              class="p-2 rounded-xl border-2 border-pink-400 bg-pink-100/80 font-bold text-xs text-gray-800 transition-all text-center">
+              4-Shot Strip
+            </button>
+            <button onclick="boothApp.setLayout('grid4')" id="layout-grid4"
+              class="p-2 rounded-xl border border-gray-200 hover:bg-pink-50 font-medium text-xs text-gray-800 transition-all text-center">
+              2x2 Collage
+            </button>
+            <button onclick="boothApp.setLayout('polaroid')" id="layout-polaroid"
+              class="p-2 rounded-xl border border-gray-200 hover:bg-pink-50 font-medium text-xs text-gray-800 transition-all text-center">
+              Polaroid 1-Shot
+            </button>
+          </div>
+        </div>
+
+        <!-- Tab 2: UNIQUE Card Themes Selection -->
+        <div>
+          <label class="text-xs font-bold text-gray-700 flex items-center gap-1.5 mb-2">
+            <i data-lucide="palette" class="w-3.5 h-3.5 text-pink-500"></i> Unique Card Themes:
+          </label>
+          <div class="grid grid-cols-3 sm:grid-cols-4 gap-2">
+            <!-- Sweet Hearts Pattern -->
+            <button onclick="boothApp.setThemeFrame('hearts')" id="theme-hearts"
+              class="p-2 rounded-xl border-2 border-pink-400 bg-rose-50 font-bold text-[11px] text-rose-900 shadow-sm text-center">
+              💖 Sweet Hearts
+            </button>
+
+            <!-- Pastel Rose with real Roses -->
+            <button onclick="boothApp.setThemeFrame('pastel_rose')" id="theme-pastel_rose"
+              class="p-2 rounded-xl border border-pink-300 bg-pink-100 font-bold text-[11px] text-pink-900 shadow-sm text-center">
+              🌹 Pastel Rose
+            </button>
+
+            <!-- Retro Checkered Pattern -->
+            <button onclick="boothApp.setThemeFrame('checkerboard')" id="theme-checkerboard"
+              class="p-2 rounded-xl border border-pink-400 bg-pink-100 font-bold text-[11px] text-pink-950 shadow-sm text-center">
+              🏁 Checkered
+            </button>
+
+            <!-- Coquette Bows & Ribbons -->
+            <button onclick="boothApp.setThemeFrame('coquette_bows')" id="theme-coquette_bows"
+              class="p-2 rounded-xl border border-pink-300 bg-orange-50 font-bold text-[11px] text-pink-900 shadow-sm text-center">
+              🎀 Pink Bows
+            </button>
+
+            <!-- Sakura Blossoms -->
+            <button onclick="boothApp.setThemeFrame('sakura')" id="theme-sakura"
+              class="p-2 rounded-xl border border-pink-300 bg-pink-50 font-bold text-[11px] text-pink-800 shadow-sm text-center">
+              🌸 Sakura Floral
+            </button>
+
+            <!-- Film Negative -->
+            <button onclick="boothApp.setThemeFrame('film_negative')" id="theme-film_negative"
+              class="p-2 rounded-xl border border-zinc-900 bg-black font-bold text-[11px] text-amber-400 shadow-sm text-center">
+              🎞️ Film 35mm
+            </button>
+
+            <!-- Haru Studio White -->
+            <button onclick="boothApp.setThemeFrame('haru_white')" id="theme-haru_white"
+              class="p-2 rounded-xl border border-gray-300 bg-white font-bold text-[11px] text-gray-800 shadow-sm text-center">
+              🤍 Haru White
+            </button>
+
+            <!-- Starry Midnight -->
+            <button onclick="boothApp.setThemeFrame('midnight')" id="theme-midnight"
+              class="p-2 rounded-xl border border-purple-800 bg-[#0f0715] font-bold text-[11px] text-purple-200 shadow-sm text-center">
+              ✨ Midnight
+            </button>
+
+            <!-- Custom Color Picker -->
+            <label class="p-2 rounded-xl border border-gray-200 hover:bg-pink-50 font-semibold text-[11px] text-gray-700 shadow-sm text-center cursor-pointer flex items-center justify-center gap-1 col-span-3 sm:col-span-4">
+              <span>🎨 Choose Any Custom Color:</span>
+              <input type="color" value="#ffe4e6" class="w-5 h-5 rounded cursor-pointer border-0 p-0 ml-1" onchange="boothApp.setCustomThemeColor(this.value)">
+            </label>
+          </div>
+        </div>
+
+        <!-- Tab 3: Interactive Stickers (WITH RELIABLE REMOVAL) -->
+        <div>
+          <div class="flex items-center justify-between mb-1.5">
+            <label class="text-xs font-bold text-gray-700 flex items-center gap-1.5">
+              <i data-lucide="sticker" class="w-3.5 h-3.5 text-pink-500"></i> Add Cute Stickers:
+            </label>
+            <div class="flex items-center gap-2">
+              <button onclick="boothApp.deleteSelectedSticker()" id="delete-selected-sticker-btn"
+                class="text-[10px] px-2 py-0.5 rounded-lg bg-rose-100 hover:bg-rose-200 text-rose-700 font-bold transition-all flex items-center gap-1">
+                <i data-lucide="trash-2" class="w-3 h-3"></i>
+                <span>Delete Selected</span>
+              </button>
+              <button onclick="boothApp.clearAllStickers()" class="text-[10px] text-gray-500 hover:text-pink-600 underline">
+                Clear All
+              </button>
+            </div>
+          </div>
+          <p class="text-[10px] text-pink-600 mb-2 font-medium">Click sticker to select, drag to move, click ✕ or press Delete to remove!</p>
+          <div class="flex flex-wrap gap-1.5 p-2 bg-pink-50/50 rounded-2xl border border-pink-100">
+            <button onclick="boothApp.addSticker('💖')" class="text-xl p-1.5 hover:scale-125 transition-transform" title="Heart">💖</button>
+            <button onclick="boothApp.addSticker('🌹')" class="text-xl p-1.5 hover:scale-125 transition-transform" title="Rose">🌹</button>
+            <button onclick="boothApp.addSticker('🎀')" class="text-xl p-1.5 hover:scale-125 transition-transform" title="Bow">🎀</button>
+            <button onclick="boothApp.addSticker('✨')" class="text-xl p-1.5 hover:scale-125 transition-transform" title="Sparkles">✨</button>
+            <button onclick="boothApp.addSticker('🌸')" class="text-xl p-1.5 hover:scale-125 transition-transform" title="Blossom">🌸</button>
+            <button onclick="boothApp.addSticker('🧸')" class="text-xl p-1.5 hover:scale-125 transition-transform" title="Teddy Bear">🧸</button>
+            <button onclick="boothApp.addSticker('💌')" class="text-xl p-1.5 hover:scale-125 transition-transform" title="Love Letter">💌</button>
+            <button onclick="boothApp.addSticker('👑')" class="text-xl p-1.5 hover:scale-125 transition-transform" title="Crown">👑</button>
+            <button onclick="boothApp.addSticker('🏹')" class="text-xl p-1.5 hover:scale-125 transition-transform" title="Cupid">🏹</button>
+            <button onclick="boothApp.addSticker('Kirsten & Ycany ♥')" class="text-[10px] px-2 py-1 bg-white rounded-full border border-pink-200 font-bold hover:scale-105 transition-transform">Kirsten & Ycany ♥</button>
+            <button onclick="boothApp.addSticker('7 Months & Counting')" class="text-[10px] px-2 py-1 bg-white rounded-full border border-pink-200 font-bold hover:scale-105 transition-transform">7 Months & Counting</button>
+            <button onclick="boothApp.addSticker('My Favorite Person')" class="text-[10px] px-2 py-1 bg-white rounded-full border border-pink-200 font-bold hover:scale-105 transition-transform">My Favorite Person</button>
+          </div>
+        </div>
+
+        <!-- Tab 4: Accurate Doodle / Signature Pen -->
+        <div class="pt-2 border-t border-pink-100 space-y-2">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <button onclick="boothApp.toggleDoodleMode()" id="doodle-btn"
+                class="px-3 py-1.5 rounded-xl border border-pink-300 bg-pink-50 hover:bg-pink-100 text-xs font-semibold text-pink-700 flex items-center gap-1.5 transition-all">
+                <i data-lucide="pen-tool" class="w-3.5 h-3.5"></i>
+                <span id="doodle-status-text">Enable Doodle Pen</span>
+              </button>
+              <input type="color" id="doodle-color" value="#e05780" class="w-6 h-6 rounded cursor-pointer border-0 p-0" title="Pen Color">
+            </div>
+            
+            <div class="flex items-center gap-2">
+              <button onclick="boothApp.undoDoodle()" class="text-[10px] px-2 py-1 rounded bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium">
+                Undo
+              </button>
+              <button onclick="boothApp.clearDoodles()" class="text-[10px] text-gray-500 hover:text-pink-600">
+                Clear
+              </button>
+            </div>
+          </div>
+
+          <!-- Brush Size Control -->
+          <div class="flex items-center gap-2 text-[11px] text-gray-600 pl-1">
+            <span>Brush Size:</span>
+            <button onclick="boothApp.setBrushSize(2)" id="brush-size-2" class="px-2 py-0.5 rounded text-[10px] font-bold bg-pink-100 text-pink-700">Thin</button>
+            <button onclick="boothApp.setBrushSize(5)" id="brush-size-5" class="px-2 py-0.5 rounded text-[10px] font-bold bg-pink-500 text-white">Medium</button>
+            <button onclick="boothApp.setBrushSize(10)" id="brush-size-10" class="px-2 py-0.5 rounded text-[10px] font-bold bg-pink-100 text-pink-700">Thick</button>
+          </div>
+        </div>
+
+        <!-- Tab 5: Editable Dedication Footer -->
+        <div class="pt-2 border-t border-pink-100 space-y-2">
+          <label class="text-xs font-bold text-gray-700 flex items-center gap-1.5">
+            <i data-lucide="edit-3" class="w-3.5 h-3.5 text-pink-500"></i> Card Footer Text:
+          </label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <input type="text" id="stamp-names" value="Kirsten & Ycany" placeholder="Names"
+              class="px-3 py-1.5 text-xs rounded-xl border border-pink-200 bg-white/80 focus:ring-2 focus:ring-pink-300 outline-none"
+              oninput="boothApp.updateStripFooter()">
+            <input type="text" id="stamp-date" value="September 19, 2026" placeholder="Date"
+              class="px-3 py-1.5 text-xs rounded-xl border border-pink-200 bg-white/80 focus:ring-2 focus:ring-pink-300 outline-none"
+              oninput="boothApp.updateStripFooter()">
+          </div>
+          <input type="text" id="stamp-quote" value="7 Months of Magic • Forever & Always" placeholder="Romantic Quote"
+            class="w-full px-3 py-1.5 text-xs rounded-xl border border-pink-200 bg-white/80 focus:ring-2 focus:ring-pink-300 outline-none"
+            oninput="boothApp.updateStripFooter()">
+        </div>
+
+      </div>
+
+      <!-- Live Photo Strip Visual Canvas & Slot Retake Controller -->
+      <div class="glass-card p-6 rounded-3xl border border-pink-200 shadow-xl flex flex-col items-center">
+        
+        <div class="flex items-center justify-between w-full mb-3">
+          <span class="text-xs font-bold text-gray-700 flex items-center gap-1.5">
+            <i data-lucide="image" class="w-4 h-4 text-pink-500"></i> Live Strip Preview
+          </span>
+          <span class="text-[10px] text-pink-500 bg-pink-100 px-2 py-0.5 rounded-full font-semibold">
+            Interactive Drag & Draw
+          </span>
+        </div>
+
+        <!-- The Physical Visual Strip Preview Container -->
+        <div id="strip-card-container" class="relative max-w-xs w-full shadow-2xl rounded-2xl p-4 transition-all duration-300 theme-hearts"
+          style="background-color: #fff0f3; border: 6px solid #ff758f;">
+          
+          <!-- Individual Shot Slots -->
+          <div id="slots-wrapper" class="space-y-3 relative z-10">
+            
+            <!-- Slot 1 -->
+            <div class="relative group rounded-lg overflow-hidden bg-pink-50 aspect-[4/3] border border-pink-200/60 shadow-inner flex items-center justify-center">
+              <img id="shot-preview-1" class="w-full h-full object-cover hidden" alt="Shot 1">
+              <span id="slot-placeholder-1" class="text-xs font-semibold text-pink-400">Pose 1</span>
+              <button onclick="boothApp.retakeSlot(0)" title="Retake Shot 1"
+                class="absolute bottom-1.5 right-1.5 px-2 py-0.5 rounded-md bg-black/60 hover:bg-black/80 text-white text-[10px] font-medium backdrop-blur transition-all flex items-center gap-1 opacity-0 group-hover:opacity-100">
+                <i data-lucide="rotate-ccw" class="w-2.5 h-2.5"></i> Retake
+              </button>
+            </div>
+
+            <!-- Slot 2 -->
+            <div class="relative group rounded-lg overflow-hidden bg-pink-50 aspect-[4/3] border border-pink-200/60 shadow-inner flex items-center justify-center">
+              <img id="shot-preview-2" class="w-full h-full object-cover hidden" alt="Shot 2">
+              <span id="slot-placeholder-2" class="text-xs font-semibold text-pink-400">Pose 2</span>
+              <button onclick="boothApp.retakeSlot(1)" title="Retake Shot 2"
+                class="absolute bottom-1.5 right-1.5 px-2 py-0.5 rounded-md bg-black/60 hover:bg-black/80 text-white text-[10px] font-medium backdrop-blur transition-all flex items-center gap-1 opacity-0 group-hover:opacity-100">
+                <i data-lucide="rotate-ccw" class="w-2.5 h-2.5"></i> Retake
+              </button>
+            </div>
+
+            <!-- Slot 3 -->
+            <div class="relative group rounded-lg overflow-hidden bg-pink-50 aspect-[4/3] border border-pink-200/60 shadow-inner flex items-center justify-center">
+              <img id="shot-preview-3" class="w-full h-full object-cover hidden" alt="Shot 3">
+              <span id="slot-placeholder-3" class="text-xs font-semibold text-pink-400">Pose 3</span>
+              <button onclick="boothApp.retakeSlot(2)" title="Retake Shot 3"
+                class="absolute bottom-1.5 right-1.5 px-2 py-0.5 rounded-md bg-black/60 hover:bg-black/80 text-white text-[10px] font-medium backdrop-blur transition-all flex items-center gap-1 opacity-0 group-hover:opacity-100">
+                <i data-lucide="rotate-ccw" class="w-2.5 h-2.5"></i> Retake
+              </button>
+            </div>
+
+            <!-- Slot 4 -->
+            <div class="relative group rounded-lg overflow-hidden bg-pink-50 aspect-[4/3] border border-pink-200/60 shadow-inner flex items-center justify-center">
+              <img id="shot-preview-4" class="w-full h-full object-cover hidden" alt="Shot 4">
+              <span id="slot-placeholder-4" class="text-xs font-semibold text-pink-400">Pose 4</span>
+              <button onclick="boothApp.retakeSlot(3)" title="Retake Shot 4"
+                class="absolute bottom-1.5 right-1.5 px-2 py-0.5 rounded-md bg-black/60 hover:bg-black/80 text-white text-[10px] font-medium backdrop-blur transition-all flex items-center gap-1 opacity-0 group-hover:opacity-100">
+                <i data-lucide="rotate-ccw" class="w-2.5 h-2.5"></i> Retake
+              </button>
+            </div>
+          </div>
+
+          <!-- Dynamic Draggable Stickers Overlay Container -->
+          <div id="stickers-overlay-container" class="absolute inset-0 pointer-events-none z-30"></div>
+
+          <!-- Interactive Drawing / Doodle Canvas Layer -->
+          <canvas id="doodle-canvas" class="absolute inset-0 w-full h-full pointer-events-none z-20"></canvas>
+
+          <!-- Strip Footer Text Display -->
+          <div class="mt-4 pt-3 text-center border-t border-pink-200/70 space-y-0.5 relative z-10">
+            <h4 id="footer-display-title" class="font-serif-elegant font-bold text-sm tracking-wide text-gray-800">
+              ♥ OUR 7TH MONTHSARY ♥
+            </h4>
+            <p id="footer-display-quote" class="font-script text-base text-pink-600 font-semibold">
+              7 Months of Magic • Forever & Always
+            </p>
+            <div class="flex items-center justify-between text-[9px] text-gray-500 pt-1 font-medium">
+              <span id="footer-display-names">Kirsten & Ycany</span>
+              <span id="footer-display-date">September 19, 2026</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Download & Save Actions -->
+        <div class="mt-6 w-full max-w-xs space-y-2.5">
+          <button onclick="boothApp.saveStripToVault()"
+            class="w-full py-3 rounded-2xl bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold text-xs shadow-lg hover:shadow-pink-300 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2">
+            <i data-lucide="heart" class="w-4 h-4 fill-white"></i>
+            <span>Save to Memory Vault (Main Page)</span>
+          </button>
+          
+          <button onclick="boothApp.downloadStripPNG()"
+            class="w-full py-3 rounded-2xl glass-card text-[var(--text-main)] font-bold text-xs border border-pink-200 hover:bg-white hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2">
+            <i data-lucide="download" class="w-4 h-4 text-pink-500"></i>
+            <span>Download High-Res PNG (Photo Folder)</span>
+          </button>
+
+          <div class="flex items-center gap-2 pt-1">
+            <button onclick="boothApp.printStrip()"
+              class="w-1/2 py-2 rounded-xl bg-pink-50 hover:bg-pink-100 text-pink-700 text-xs font-semibold border border-pink-200 transition-all flex items-center justify-center gap-1.5">
+              <i data-lucide="printer" class="w-3.5 h-3.5"></i>
+              <span>Print Strip</span>
+            </button>
+            <button onclick="boothApp.resetAllShots()"
+              class="w-1/2 py-2 rounded-xl bg-gray-50 hover:bg-gray-100 text-gray-600 text-xs font-semibold border border-gray-200 transition-all flex items-center justify-center gap-1.5">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              <span>Clear Strip</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Hidden High-Res Render Canvas -->
+  <canvas id="booth-export-canvas" class="hidden"></canvas>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- Scripts -->
+  <script src="photobooth.js"></script>
+</body>
+
+</html>

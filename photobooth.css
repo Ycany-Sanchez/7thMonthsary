@@ -1,0 +1,243 @@
+/* Photobooth Dedicated Stylesheet - Kirsten & Ycany */
+
+/* Canvas Floating particles background */
+#particles-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ========================================================
+   UNIQUE CARD THEMES & DECORATIVE PATTERNS
+   ======================================================== */
+
+/* 1. SWEET HEARTS THEME */
+.theme-hearts {
+  background-color: #fff0f3 !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 24 24'%3E%3Cpath fill='%23ff758f' fill-opacity='0.28' d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/%3E%3C/svg%3E") !important;
+  border: 6px solid #ff758f !important;
+  color: #881337 !important;
+}
+
+/* 2. PASTEL ROSE WITH REAL BOTANICAL ROSES */
+.theme-pastel_rose {
+  background-color: #fff1f2 !important;
+  border: 6px solid #fda4af !important;
+  color: #881337 !important;
+  position: relative;
+}
+
+/* Botanical Rose Corner Illustrations via SVG */
+.theme-pastel_rose::before {
+  content: '';
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  width: 54px;
+  height: 54px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M35 55 C20 40 25 15 45 25 C65 15 75 35 60 55 C75 70 50 85 45 70 C35 85 15 70 35 55 Z' fill='%23fb7185' stroke='%23e11d48' stroke-width='2'/%3E%3Ccircle cx='47' cy='45' r='14' fill='%23fda4af' stroke='%23e11d48' stroke-width='2'/%3E%3Cpath d='M44 42 Q48 36 52 44 Q46 50 44 42 Z' fill='%23be123c'/%3E%3Cpath d='M25 65 C15 75 10 90 22 92 C34 90 32 75 25 65 Z' fill='%234ade80' stroke='%2315803d' stroke-width='2'/%3E%3Cpath d='M65 25 C75 15 90 10 92 22 C90 34 75 32 65 25 Z' fill='%234ade80' stroke='%2315803d' stroke-width='2'/%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.theme-pastel_rose::after {
+  content: '';
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  width: 58px;
+  height: 58px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M35 55 C20 40 25 15 45 25 C65 15 75 35 60 55 C75 70 50 85 45 70 C35 85 15 70 35 55 Z' fill='%23fb7185' stroke='%23e11d48' stroke-width='2'/%3E%3Ccircle cx='47' cy='45' r='14' fill='%23fda4af' stroke='%23e11d48' stroke-width='2'/%3E%3Cpath d='M44 42 Q48 36 52 44 Q46 50 44 42 Z' fill='%23be123c'/%3E%3Cpath d='M25 65 C15 75 10 90 22 92 C34 90 32 75 25 65 Z' fill='%234ade80' stroke='%2315803d' stroke-width='2'/%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  z-index: 5;
+  transform: rotate(180deg);
+}
+
+/* 3. RETRO KOREAN CHECKERBOARD THEME */
+.theme-checkerboard {
+  background-color: #fff5f7 !important;
+  background-image: repeating-conic-gradient(#ffccd5 0% 25%, #ffffff 0% 50%) !important;
+  background-size: 26px 26px !important;
+  border: 6px solid #fb7185 !important;
+  color: #4a044e !important;
+}
+
+/* 4. COQUETTE BOWS & RIBBONS THEME */
+.theme-coquette_bows {
+  background-color: #fff7ed !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='50' viewBox='0 0 100 100'%3E%3Cpath d='M50 48 C40 35 25 38 32 52 C38 62 48 53 50 48 Z' fill='%23f472b6' fill-opacity='0.35'/%3E%3Cpath d='M50 48 C60 35 75 38 68 52 C62 62 52 53 50 48 Z' fill='%23f472b6' fill-opacity='0.35'/%3E%3Ccircle cx='50' cy='48' r='4' fill='%23db2777' fill-opacity='0.4'/%3E%3Cpath d='M48 51 Q40 68 36 72' stroke='%23db2777' stroke-width='2' fill='none' opacity='0.3'/%3E%3Cpath d='M52 51 Q60 68 64 72' stroke='%23db2777' stroke-width='2' fill='none' opacity='0.3'/%3E%3C/svg%3E") !important;
+  border: 6px solid #f472b6 !important;
+  color: #831843 !important;
+}
+
+/* 5. SAKURA BLOSSOMS THEME */
+.theme-sakura {
+  background-color: #fdf2f8 !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='32' r='12' fill='%23fbcfe8' fill-opacity='0.45'/%3E%3Ccircle cx='65' cy='44' r='12' fill='%23fbcfe8' fill-opacity='0.45'/%3E%3Ccircle cx='59' cy='62' r='12' fill='%23fbcfe8' fill-opacity='0.45'/%3E%3Ccircle cx='41' cy='62' r='12' fill='%23fbcfe8' fill-opacity='0.45'/%3E%3Ccircle cx='35' cy='44' r='12' fill='%23fbcfe8' fill-opacity='0.45'/%3E%3Ccircle cx='50' cy='49' r='6' fill='%23fbbf24' fill-opacity='0.5'/%3E%3C/svg%3E") !important;
+  border: 6px solid #f472b6 !important;
+  color: #831843 !important;
+}
+
+/* 6. VINTAGE 35MM FILM NEGATIVE THEME */
+.theme-film_negative {
+  background-color: #09090b !important;
+  border: 6px solid #27272a !important;
+  color: #f59e0b !important;
+  position: relative;
+}
+
+.theme-film_negative #footer-display-title {
+  color: #ffffff !important;
+}
+
+.theme-film_negative #footer-display-quote {
+  color: #fbbf24 !important;
+}
+
+.theme-film_negative #footer-display-names,
+.theme-film_negative #footer-display-date {
+  color: #a1a1aa !important;
+}
+
+/* Sprocket holes on film negative */
+.theme-film_negative::before,
+.theme-film_negative::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 12px;
+  background-image: radial-gradient(#18181b 36%, transparent 40%);
+  background-size: 12px 28px;
+  z-index: 5;
+}
+.theme-film_negative::before { left: 2px; }
+.theme-film_negative::after { right: 2px; }
+
+/* 7. MINIMAL HARU STUDIO WHITE */
+.theme-haru_white {
+  background-color: #ffffff !important;
+  border: 6px solid #fce7f3 !important;
+  color: #1f2937 !important;
+}
+
+/* 8. STARRY MIDNIGHT NOIR */
+.theme-midnight {
+  background-color: #0f0715 !important;
+  background-image: radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 10px), radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 8px) !important;
+  background-size: 90px 90px, 45px 45px !important;
+  background-position: 0 0, 20px 20px !important;
+  border: 6px solid #701a75 !important;
+  color: #fdf4ff !important;
+}
+
+.theme-midnight #footer-display-title { color: #ffffff !important; }
+.theme-midnight #footer-display-quote { color: #f472b6 !important; }
+.theme-midnight #footer-display-names,
+.theme-midnight #footer-display-date { color: #c084fc !important; }
+
+/* ========================================================
+   DRAGGABLE & SELECTABLE STICKERS WITH OBVIOUS DELETE
+   ======================================================== */
+.booth-sticker {
+  position: absolute;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+  pointer-events: auto;
+  transition: transform 0.12s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border-radius: 12px;
+  z-index: 25;
+}
+
+.booth-sticker:active {
+  cursor: grabbing;
+}
+
+/* Clearly visible selection ring when clicked */
+.booth-sticker.is-selected {
+  outline: 2.5px dashed #f43f5e;
+  background: rgba(255, 255, 255, 0.4);
+}
+
+/* The Delete Button: Clear, Large, Always Accessible */
+.booth-sticker .delete-handle {
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  width: 24px;
+  height: 24px;
+  background: #e11d48;
+  color: #ffffff;
+  border: 2px solid #ffffff;
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.35);
+  z-index: 60;
+  pointer-events: auto;
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.booth-sticker .delete-handle:hover {
+  transform: scale(1.25);
+  background: #be123c;
+}
+
+/* ========================================================
+   DOODLE CANVAS WITH ACCURATE CURSOR POSITIONING
+   ======================================================== */
+#doodle-canvas {
+  touch-action: none;
+  user-select: none;
+  cursor: crosshair;
+}
+
+/* Layout 2x2 Grid mode */
+.layout-grid4 #slots-wrapper {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.layout-polaroid #slots-wrapper > div:not(:first-child) {
+  display: none;
+}
+
+.layout-polaroid #slots-wrapper > div:first-child {
+  aspect-ratio: 1 / 1;
+}
+
+/* Printing optimization */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #strip-card-container, #strip-card-container * {
+    visibility: visible;
+  }
+  #strip-card-container {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: none !important;
+    border: none !important;
+  }
+}

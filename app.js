@@ -303,7 +303,7 @@ async function saveMemoryEdit() {
   }
 
   closeEditMemoryModal();
-  showToast('✨ Memory updated successfully!');
+  showToast('Memory updated successfully');
 }
 
 // Photo Upload Handling
@@ -341,7 +341,7 @@ async function handlePhotoUpload(files) {
   renderMarquee();
   renderGridGallery();
   triggerHeartConfetti();
-  showToast('✨ New memory added to our collection!');
+  showToast('New memory added to our collection');
 }
 
 function readFileAsDataURL(file) {
@@ -384,7 +384,7 @@ async function removePhoto(id) {
     allMemories = allMemories.filter(m => m.id !== id);
     renderMarquee();
     renderGridGallery();
-    showToast('Memory removed 🗑️');
+    showToast('Memory removed');
   }
 }
 
@@ -779,7 +779,7 @@ function saveCustomLetter() {
   const letterText = document.getElementById('letter-content-input').value;
   localStorage.setItem('monthsary_love_letter', letterText);
   document.getElementById('letter-display-text').textContent = letterText;
-  showToast('💌 Your love letter was saved safely!');
+  showToast('Your love letter was saved safely');
   closeLetterModal();
 }
 
@@ -877,10 +877,35 @@ class RomanticAudioPlayer {
     const dockTitle = document.getElementById('dock-song-title');
     if (dockTitle) dockTitle.textContent = track.title;
 
-    // Update iframe embed with autoplay
+    // Update direct YouTube link
+    const ytLink = document.getElementById('dock-yt-direct-link');
+    if (ytLink) {
+      ytLink.href = `https://www.youtube.com/watch?v=${track.id}`;
+    }
+
+    // Update iframe embed with optimized parameters
     const frame = document.getElementById('main-yt-frame');
     if (frame) {
-      frame.src = `https://www.youtube.com/embed/${track.id}?autoplay=1&rel=0`;
+      const origin = window.location.origin && window.location.origin !== 'null' ? `&origin=${encodeURIComponent(window.location.origin)}` : '';
+      frame.src = `https://www.youtube.com/embed/${track.id}?autoplay=1&enablejsapi=1&playsinline=1&rel=0${origin}`;
+    }
+
+    // Check if local MP3 is present in songs/ folder
+    const localSongMap = {
+      risk_it_all: 'songs/risk_it_all.mp3',
+      soft_spot: 'songs/soft_spot.mp3',
+      kabisado: 'songs/kabisado.mp3'
+    };
+    if (localSongMap[key]) {
+      const testAudio = new Audio();
+      testAudio.src = localSongMap[key];
+      testAudio.oncanplay = () => {
+        this.customAudio.src = localSongMap[key];
+        this.customAudio.play().then(() => {
+          this.customAudioLoaded = true;
+          if (frame) frame.src = '';
+        }).catch(() => {});
+      };
     }
 
     // Update active highlight on dock buttons
@@ -896,7 +921,7 @@ class RomanticAudioPlayer {
     });
 
     updateMusicUI(true);
-    showToast(`🎵 Playing: ${track.title}`);
+    showToast(`Playing: ${track.title}`);
   }
 
   loadUserAudio(file) {
@@ -912,7 +937,7 @@ class RomanticAudioPlayer {
       this.customAudio.play();
       this.isPlaying = true;
       updateMusicUI(true);
-      showToast('🎵 Custom MP3 loaded & playing!');
+      showToast('Custom song loaded & playing');
     };
     reader.readAsDataURL(file);
   }
@@ -928,11 +953,11 @@ function updateMusicUI(playing) {
   if (playing) {
     if (disc) disc.classList.add('playing');
     if (btn) btn.innerHTML = '<i data-lucide="volume-2" class="w-4 h-4 text-white"></i>';
-    if (text) text.textContent = `${musicPlayer.currentTitle} 💕`;
+    if (text) text.textContent = musicPlayer.currentTitle;
   } else {
     if (disc) disc.classList.remove('playing');
     if (btn) btn.innerHTML = '<i data-lucide="play" class="w-4 h-4 text-white"></i>';
-    if (text) text.textContent = `${musicPlayer.currentTitle} 🎵`;
+    if (text) text.textContent = musicPlayer.currentTitle;
   }
   if (window.lucide) lucide.createIcons();
 }
@@ -1085,7 +1110,7 @@ function showToast(msg) {
 function setTheme(themeName) {
   document.documentElement.setAttribute('data-theme', themeName);
   localStorage.setItem('monthsary_theme', themeName);
-  showToast(`Theme changed to ${themeName.replace('-', ' ').toUpperCase()} 🎨`);
+  showToast(`Theme changed to ${themeName.replace('-', ' ').toUpperCase()}`);
 }
 
 function escapeHtml(str) {
